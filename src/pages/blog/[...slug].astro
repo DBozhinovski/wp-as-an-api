@@ -1,0 +1,137 @@
+---
+import { Image, Picture } from "@astrojs/image/components";
+import Authorcard from "@components/authorcard.astro";
+import Container from "@components/container.astro";
+import Label from "@components/ui/label.astro";
+import { authors } from "@data/authors";
+import { categories } from "@data/category";
+import Layout from "@layouts/Layout.astro";
+import { getFormattedDate } from "@utils/all";
+// import { CollectionEntry, getCollection } from "astro:content";
+
+import type { Author } from "@data/authors";
+import type { Category } from "@data/category";
+import { fetchPosts } from "@utils/wpPosts";
+import { content } from "../../../tailwind.config.cjs";
+
+// type Props = CollectionEntry<"blog">;
+export async function getStaticPaths() {
+  const res = await fetchPosts({ length: 50 });
+  const blog = await res.json();
+
+  // console.log('Posts fetch:', blog.data.posts);
+  // const blog = await getCollection("blog");
+  return blog.data.posts.nodes.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+// console.log('Post props:', post);
+// const { Content, injectedFrontmatter } = await post.render();
+
+// const author = authors.find((item) => item.slug === post.data.author) as Author;
+// const category = categories.find(
+//   (item) => item.slug === post.data.category
+// ) as Category;
+---
+
+<Layout
+  title={post.title}
+  desc={post.excerpt}
+  ogimage={post.featuredImage?.node?.mediaItemUrl}>
+  <Container>
+    <div class="max-w-screen-md mx-auto">
+      <div class="text-center">
+        <Label theme={'green'}>Uncategorized</Label>
+      </div>
+
+      <h1
+        class="mt-2 mb-3 text-3xl font-semibold tracking-tight text-center lg:leading-snug text-brand-primary lg:text-4xl dark:text-white">
+        {post.title}
+      </h1>
+
+      <div class="flex justify-center mt-3 space-x-3 text-gray-500">
+        <!-- <div class="flex items-center gap-3">
+          <div class="relative flex-shrink-0 w-10 h-10">
+            {
+              author.image && (
+                <Image
+                  src={author.image}
+                  alt="Author Photo"
+                  width={80}
+                  height={80}
+                  loading="eager"
+                  class="rounded-full"
+                />
+              )
+            }
+          </div>
+
+          <div>
+            <p class="text-gray-800 dark:text-gray-400">
+              {author.name}
+            </p>
+            <div class="flex items-center space-x-2 text-sm">
+              <time
+                class="text-gray-500 dark:text-gray-400"
+                datetime={post.data.publishDate}>
+                {getFormattedDate(post.data.publishDate)}
+              </time>
+              <span>
+                · {Math.round(injectedFrontmatter.estReadingTime) || "5"} min read
+              </span>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </Container>
+
+  <div
+    class="relative z-0 max-w-screen-lg mx-auto overflow-hidden lg:rounded-lg aspect-video">
+    {
+      post.featuredImage?.node?.mediaItemUrl && (
+        <Picture
+          src={post.featuredImage?.node?.mediaItemUrl}
+          widths={[200, 400, 800]}
+          sizes="(max-width: 640px) 90vw, 480px"
+          aspectRatio="16:9"
+          width={1024}
+          heignt={576}
+          alt="Thumbnail"
+          loading="eager"
+          class="w-full"
+        />
+      )
+    }
+  </div>
+
+  <Container>
+    <article class="max-w-screen-md mx-auto">
+      <div
+        class="mx-auto my-3 prose prose-base dark:prose-invert prose-a:text-blue-600">
+        <!-- <Content /> -->
+        <Fragment set:html={post.content} />
+
+        <!-- <div class="flex flex-wrap items-center w-full gap-3 md:w-auto">
+          {
+            post.data.tags.map((tag) => (
+              <span class="text-sm text-gray-500">#{tag}</span>
+            ))
+          }
+        </div> -->
+      </div>
+
+      <div class="flex justify-center mt-7 mb-7">
+        <a
+          href="/"
+          class="px-5 py-3 text-sm text-blue-600 transition rounded-md dark:text-blue-500 bg-blue-50 hover:bg-blue-100">
+          ← View all posts
+        </a>
+      </div>
+      <!-- {author && <Authorcard author={author} />} -->
+    </article>
+  </Container>
+</Layout>

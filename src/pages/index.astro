@@ -1,0 +1,35 @@
+---
+import Container from "@components/container.astro";
+import Postlist from "@components/postlist.astro";
+import Layout from "@layouts/Layout.astro";
+// import { latestPosts } from "@utils/content";
+
+import { fetchPosts } from '../utils/wpPosts';
+
+const wpPosts = await fetchPosts({ length: 10 });
+const postContents = await wpPosts.json();
+
+---
+
+<Layout title="">
+  <Container>
+    <main>
+      <div class="grid gap-10 lg:gap-10 md:grid-cols-2">
+        {
+          postContents.data.posts.nodes
+            .slice(0, 2)
+            .map((post) => (
+              <Postlist post={post} aspect="landscape" preloadImage={true} />
+            ))
+        }
+      </div>
+      <div class="grid gap-10 mt-10 lg:gap-10 md:grid-cols-2 xl:grid-cols-3">
+        {
+          postContents.data.posts.nodes
+            .slice(2)
+            .map((post) => <Postlist post={post} aspect="square" />)
+        }
+      </div>
+    </main>
+  </Container>
+</Layout>

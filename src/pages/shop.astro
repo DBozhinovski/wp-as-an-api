@@ -1,0 +1,26 @@
+---
+import Container from "@components/container.astro";
+import Pagetitle from "@components/pagetitle.astro";
+import Productlist from "@components/productlist.astro";
+import Layout from "@layouts/Layout.astro";
+import { getProducts } from "@utils/woocommerce";
+
+
+const products = await getProducts({ perPage: 20 });
+// console.log(products);
+---
+
+
+<Layout title="Shop">
+  <Container>
+    <Pagetitle>
+      <Fragment slot="title">Shop</Fragment>
+      <Fragment slot="desc">Our products</Fragment>
+    </Pagetitle>
+    <main>
+      <div class="grid gap-10 mt-10 lg:gap-10 md:grid-cols-2 xl:grid-cols-3">
+        { products.map(p => <Productlist product={p} aspect="square" />) }
+      </div>
+    </main>
+  </Container>
+</Layout>
