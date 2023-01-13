@@ -24,7 +24,9 @@
       ],
       "@pages/*": [
         "pages/*"
-      ],
-    }
+      ]
+    },
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   }
 }

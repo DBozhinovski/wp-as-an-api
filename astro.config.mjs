@@ -8,6 +8,9 @@ import { remarkReadingTime } from "./src/utils/all";
 import node from "@astrojs/node";
 
 // https://astro.build/config
+import solidJs from "@astrojs/solid-js";
+
+// https://astro.build/config
 export default defineConfig({
   // output: 'server',
   site: "https://stablo-astro.web3templates.com",
@@ -21,7 +24,7 @@ export default defineConfig({
   },
   integrations: [tailwind(), image({
     serviceEntryPoint: "@astrojs/image/sharp"
-  }), mdx(), sitemap()],
+  }), mdx(), sitemap(), solidJs()]
   // adapter: node({
   //   mode: 'standalone',
   // }),
